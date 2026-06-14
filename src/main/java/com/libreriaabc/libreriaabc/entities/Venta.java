@@ -15,21 +15,21 @@ public class Venta {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "venta_id")
-    private Integer ventaId;
+    private Integer venta_id;
 
     @Column(name = "fecha_venta", updatable = false)
-    private LocalDateTime fechaVenta = LocalDateTime.now();
+    private LocalDateTime fecha_venta = LocalDateTime.now();
 
     @ManyToOne
     @JoinColumn(name = "cliente_id", nullable = false)
-    private Cliente cliente;
+    private Cliente cliente_id;
 
     @ManyToOne
     @JoinColumn(name = "usuario_id", nullable = false)
-    private Usuario usuario;
+    private Usuario usuario_id;
 
     @Column(name = "tipo_documento", nullable = false, length = 20)
-    private String tipoDocumento;
+    private String tipo_documento;
 
     @Column(nullable = false, length = 4)
     private String serie;
@@ -38,7 +38,7 @@ public class Venta {
     private String numero;
 
     @Column(name = "forma_de_pago", nullable = false, length = 30)
-    private String formaDePago;
+    private String forma_de_pago;
 
     @Column(nullable = false, precision = 18, scale = 2)
     private BigDecimal total;

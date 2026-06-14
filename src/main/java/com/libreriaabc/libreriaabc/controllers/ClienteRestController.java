@@ -3,12 +3,17 @@ package com.libreriaabc.libreriaabc.controllers;
 import com.libreriaabc.libreriaabc.entities.Cliente;
 import com.libreriaabc.libreriaabc.repositories.ClienteRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/clientes")
+@CrossOrigin(origins = "*")
 public class ClienteRestController {
 
     @Autowired
@@ -22,8 +27,28 @@ public class ClienteRestController {
 
     // 2. REGISTRAR CLIENTE (POST)
     @PostMapping
-    public Cliente guardarCliente(@RequestBody Cliente cliente) {
-        return clienteRepository.save(cliente);
+    public ResponseEntity<?> guardarCliente(@RequestBody Cliente cliente) {
+
+        Map<String, Object> response = new HashMap<>();
+
+        try {
+
+            Cliente clienteGuardado = clienteRepository.save(cliente);
+
+            response.put("success", true);
+            response.put("message", "Cliente registrado correctamente");
+            response.put("cliente", clienteGuardado);
+
+            return ResponseEntity.ok(response);
+
+        } catch (Exception e) {
+
+            response.put("success", false);
+            response.put("message", "No se pudo registrar el cliente");
+            response.put("error", e.getMessage());
+
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+        }
     }
 
     // 3. ACTUALIZAR DATOS DE CLIENTE (PUT)
@@ -31,8 +56,8 @@ public class ClienteRestController {
     public Cliente actualizarCliente(@PathVariable Integer id, @RequestBody Cliente nuevoCliente) {
         return clienteRepository.findById(id)
                 .map(cliente -> {
-                    cliente.setNombreCompleto(nuevoCliente.getNombreCompleto());
-                    cliente.setDocumentoIdentidad(nuevoCliente.getDocumentoIdentidad());
+                    cliente.setNombre_completo(nuevoCliente.getNombre_completo());
+                    cliente.setDocumento_identidad(nuevoCliente.getDocumento_identidad()    );
                     cliente.setTelefono(nuevoCliente.getTelefono());
                     cliente.setDireccion(nuevoCliente.getDireccion());
                     return clienteRepository.save(cliente);

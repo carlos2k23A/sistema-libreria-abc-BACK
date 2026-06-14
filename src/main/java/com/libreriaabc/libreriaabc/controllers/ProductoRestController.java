@@ -1,14 +1,20 @@
 package com.libreriaabc.libreriaabc.controllers;
 
+import com.libreriaabc.libreriaabc.entities.Cliente;
 import com.libreriaabc.libreriaabc.entities.Producto;
 import com.libreriaabc.libreriaabc.repositories.ProductoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/productos")
+@CrossOrigin(origins = "*")
 public class ProductoRestController {
 
     @Autowired
@@ -21,9 +27,35 @@ public class ProductoRestController {
     }
 
     // 2. CREATE (Insertar nuevo) -> POST
-    @PostMapping
+    /*@PostMapping
     public Producto guardarProducto(@RequestBody Producto producto) {
         return productoRepository.save(producto);
+    }*/
+
+
+    @PostMapping
+    public ResponseEntity<?> guardarProducto(@RequestBody Producto producto) {
+
+        Map<String, Object> response = new HashMap<>();
+
+        try {
+
+            Producto productGuardado = productoRepository.save(producto);
+
+            response.put("success", true);
+            response.put("message", "Producto registrado correctamente");
+            response.put("cliente", productGuardado);
+
+            return ResponseEntity.ok(response);
+
+        } catch (Exception e) {
+
+            response.put("success", false);
+            response.put("message", "No se pudo registrar el producto");
+            response.put("error", e.getMessage());
+
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+        }
     }
 
     // 3. UPDATE (Actualizar uno existente) -> PUT
@@ -34,7 +66,7 @@ public class ProductoRestController {
                     producto.setNombre(nuevoProducto.getNombre());
                     producto.setDescripcion(nuevoProducto.getDescripcion());
                     producto.setPrecio(nuevoProducto.getPrecio());
-                    producto.setStockActual(nuevoProducto.getStockActual());
+                    producto.setStock_actual(nuevoProducto.getStock_actual());
                     return productoRepository.save(producto);
                 }).orElseGet(() -> {
                     return null; // Si no existe el ID, no hace nada

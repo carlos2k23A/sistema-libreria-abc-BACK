@@ -14,7 +14,7 @@ public class Producto {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "producto_id")
-    private Integer productoId;
+    private Integer producto_id;
 
     @Column(nullable = false, length = 200)
     private String nombre;
@@ -26,18 +26,18 @@ public class Producto {
     private BigDecimal precio;
 
     @Column(name = "stock_actual", nullable = false)
-    private Integer stockActual;
+    private Integer stock_actual;
 
     @Column(name = "stock_minimo", nullable = false)
-    private Integer stockMinimo = 5;
+    private Integer stock_minimo = 5;
 
     @ManyToOne
     @JoinColumn(name = "categoria_id", nullable = false)
-    private Categoria categoria;
+    private Categoria categoria_id;
 
     @Column(length = 255)
     private String portada;
 
     @Column(name = "fecha_registro", updatable = false, insertable = false)
-    private LocalDateTime fechaRegistro;
+    private LocalDateTime fecha_registro;
 }

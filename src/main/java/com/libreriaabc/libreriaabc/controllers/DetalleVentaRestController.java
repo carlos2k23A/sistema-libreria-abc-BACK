@@ -32,7 +32,7 @@ public class DetalleVentaRestController {
         return detalleVentaRepository.findById(id)
                 .map(detalle -> {
                     detalle.setCantidad(nuevoDetalle.getCantidad());
-                    detalle.setPrecioUnitario(nuevoDetalle.getPrecioUnitario());
+                    detalle.setPrecio_unitario(nuevoDetalle.getPrecio_unitario());
                     // Si tu entidad mapea los objetos Venta o Producto completos, se actualizarían aquí
                     return detalleVentaRepository.save(detalle);
                 }).orElseGet(() -> {
