@@ -62,17 +62,41 @@ public class UsuarioRestController {
 
     // 3. ACTUALIZAR CONTRASEÑA O ROL (PUT)
     @PutMapping("/{id}")
-    public Usuario actualizarUsuario(@PathVariable Integer id, @RequestBody Usuario nuevoUsuario) {
+    public ResponseEntity<?> actualizarUsuario(@PathVariable Integer id, @RequestBody Usuario nuevoUsuario) {
         return usuarioRepository.findById(id)
                 .map(usuario -> {
                     usuario.setUsername(nuevoUsuario.getUsername());
                     usuario.setPassword_hash(nuevoUsuario.getPassword_hash()) ; // Aquí se guardaría la nueva clave
                     usuario.setRol(nuevoUsuario.getRol());
-                    return usuarioRepository.save(usuario);
+
+
+                    Map<String, Object> response = new HashMap<>();
+                    try {
+
+                        Usuario usuarioGuardado = usuarioRepository.save(usuario);
+
+                        response.put("success", true);
+                        response.put("message", "Usuario actualizado correctamente");
+                        response.put("cliente", usuarioGuardado);
+
+                        return ResponseEntity.ok(response);
+
+                    } catch (Exception e) {
+
+                        response.put("success", false);
+                        response.put("message", "No se pudo actualizar los datos");
+                        response.put("error", e.getMessage());
+
+                        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+                    }
+
+
                 }).orElseGet(() -> {
                     return null; // Si el ID no existe, no hace nada
                 });
     }
+
+
 
     // 4. ELIMINAR ACCESO (DELETE)
     @DeleteMapping("/{id}")

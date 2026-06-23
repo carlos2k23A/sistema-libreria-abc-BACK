@@ -53,14 +53,36 @@ public class ClienteRestController {
 
     // 3. ACTUALIZAR DATOS DE CLIENTE (PUT)
     @PutMapping("/{id}")
-    public Cliente actualizarCliente(@PathVariable Integer id, @RequestBody Cliente nuevoCliente) {
+    public ResponseEntity<?>  actualizarCliente(@PathVariable Integer id, @RequestBody Cliente nuevoCliente) {
+
+
         return clienteRepository.findById(id)
                 .map(cliente -> {
                     cliente.setNombre_completo(nuevoCliente.getNombre_completo());
                     cliente.setDocumento_identidad(nuevoCliente.getDocumento_identidad()    );
                     cliente.setTelefono(nuevoCliente.getTelefono());
                     cliente.setDireccion(nuevoCliente.getDireccion());
-                    return clienteRepository.save(cliente);
+                  //  return clienteRepository.save(cliente);
+                    Map<String, Object> response = new HashMap<>();
+                    try {
+
+                        Cliente clienteGuardado = clienteRepository.save(cliente);
+
+                        response.put("success", true);
+                        response.put("message", "Cliente actualizado correctamente");
+                        response.put("cliente", clienteGuardado);
+
+                        return ResponseEntity.ok(response);
+
+                    } catch (Exception e) {
+
+                        response.put("success", false);
+                        response.put("message", "No se pudo actualizar el cliente");
+                        response.put("error", e.getMessage());
+
+                        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+                    }
+
                 }).orElseGet(() -> {
                     return null; // Si el ID no existe, no hace nada
                 });

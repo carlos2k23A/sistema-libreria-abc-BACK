@@ -60,14 +60,33 @@ public class ProductoRestController {
 
     // 3. UPDATE (Actualizar uno existente) -> PUT
     @PutMapping("/{id}")
-    public Producto actualizarProducto(@PathVariable Integer id, @RequestBody Producto nuevoProducto) {
+    public ResponseEntity<?> actualizarProducto(@PathVariable Integer id, @RequestBody Producto nuevoProducto) {
         return productoRepository.findById(id)
                 .map(producto -> {
                     producto.setNombre(nuevoProducto.getNombre());
                     producto.setDescripcion(nuevoProducto.getDescripcion());
                     producto.setPrecio(nuevoProducto.getPrecio());
                     producto.setStock_actual(nuevoProducto.getStock_actual());
-                    return productoRepository.save(producto);
+
+                            Map<String, Object> response = new HashMap<>();
+                            try {
+
+                                 Producto productoGuardado= productoRepository.save(producto);
+
+                                response.put("success", true);
+                                response.put("message", "Libro actualizado correctamente");
+                                response.put("Libro", productoGuardado);
+
+                                return ResponseEntity.ok(response);
+
+                            } catch (Exception e) {
+
+                                response.put("success", false);
+                                response.put("message", "No se pudo actualizar los datos");
+                                response.put("error", e.getMessage());
+
+                                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+                            }
                 }).orElseGet(() -> {
                     return null; // Si no existe el ID, no hace nada
                 });
